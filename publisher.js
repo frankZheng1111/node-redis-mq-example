@@ -2,21 +2,24 @@
 //
 'use strict';
 
-import redis from 'redis';
+const redis = require('redis');
 
 const HOST = '127.0.0.1';
+const PORT = 6379;
 
-try{   
-  let client = redis.createClient(6379, HOST);
+try{
+  let client = redis.createClient(PORT, HOST);
+  console.log('waiting for publish messages...');
 
   client.on('error', (err) => {
-    console.error('err'+err);
+    console.error('err: ', err);
   });
 
   client.on('ready', () => {
-    client.publish('testFirst','hi! first!');
-    client.publish('testSecond','hi! second!');
-    client.end();
+    setTimeout(() => {
+      client.publish('queue-first','hi! first!');
+      client.publish('queue-second','hi! second!');
+    }, 5000);
   });
 }
 
